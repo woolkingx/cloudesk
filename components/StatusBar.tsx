@@ -7,9 +7,11 @@ interface StatusBarProps {
   worksheets: Worksheet[];
   currentWorksheet: string;
   onWorksheetSwitch: (id: string) => void;
+  debugInfo?: string | null;
+  onDebugToggle?: () => void;
 }
 
-export function StatusBar({ worksheets, currentWorksheet, onWorksheetSwitch }: StatusBarProps) {
+export function StatusBar({ worksheets, currentWorksheet, onWorksheetSwitch, debugInfo, onDebugToggle }: StatusBarProps) {
   const router = useRouter();
   const [time, setTime] = useState('');
 
@@ -162,8 +164,8 @@ export function StatusBar({ worksheets, currentWorksheet, onWorksheetSwitch }: S
         left: 0,
         right: 0,
         zIndex: 1000,
-        boxShadow: position === 'top' 
-          ? '0 2px 4px rgba(0,0,0,0.1)' 
+        boxShadow: position === 'top'
+          ? '0 2px 4px rgba(0,0,0,0.1)'
           : '0 -2px 4px rgba(0,0,0,0.1)',
         cursor: isDragging ? 'grabbing' : 'grab',
         transition: isDragging ? 'none' : 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -185,17 +187,17 @@ export function StatusBar({ worksheets, currentWorksheet, onWorksheetSwitch }: S
         <span style={{ transform: 'rotate(90deg)' }}>⋮⋮</span>
       </div>
 
-      {/* Logo/Title */}
-      <div style={{ 
+      {/* 當前 Worksheet 名稱 */}
+      <div style={{
         fontWeight: '600',
         marginRight: '24px',
         color: '#ecf0f1'
       }}>
-        CloudDesk OS
+        {currentWorksheet}
       </div>
 
       {/* Worksheet Tabs */}
-      <div style={{ 
+      <div style={{
         display: 'flex',
         gap: '8px',
         flex: 1
@@ -209,11 +211,11 @@ export function StatusBar({ worksheets, currentWorksheet, onWorksheetSwitch }: S
 //              router.push(`/workspace/${worksheet.id}`); // 新增導航
             }}
             style={{
-              background: worksheet.id === currentWorksheet 
-                ? 'rgba(255,255,255,0.1)' 
+              background: worksheet.id === currentWorksheet
+                ? 'rgba(255,255,255,0.1)'
                 : 'transparent',
-              border: worksheet.id === currentWorksheet 
-                ? '1px solid rgba(255,255,255,0.2)' 
+              border: worksheet.id === currentWorksheet
+                ? '1px solid rgba(255,255,255,0.2)'
                 : '1px solid transparent',
               borderRadius: '6px',
               padding: '6px 12px',
@@ -237,7 +239,7 @@ export function StatusBar({ worksheets, currentWorksheet, onWorksheetSwitch }: S
               }
             }}
           >
-            <span style={{ 
+            <span style={{
               color: getStatusColor(worksheet.status),
               fontSize: '12px'
             }}>
@@ -258,7 +260,6 @@ export function StatusBar({ worksheets, currentWorksheet, onWorksheetSwitch }: S
           </button>
         ))}
       </div>
-      
       {/* System Status */}
       <div style={{ 
         display: 'flex',
@@ -277,6 +278,31 @@ export function StatusBar({ worksheets, currentWorksheet, onWorksheetSwitch }: S
           <span>{time}</span>
         </div>
       </div>
+            
+      {/* Debug 開關按鈕 */}
+      {onDebugToggle && (
+        <button
+          onClick={onDebugToggle}
+          style={{
+            background: 'transparent',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '6px',
+            padding: '6px 12px',
+            color: 'white',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '13px',
+            transition: 'all 0.2s ease',
+            outline: 'none'
+          }}
+        >
+          {debugInfo ? 'Hide Debug' : 'Show Debug'}
+        </button>
+      )}
     </div>
+
+    
   );
 }

@@ -1,67 +1,40 @@
-'use client';
-import React from 'react';
-import { StatusBar } from '../StatusBar';
-import { Worksheet } from '../../hooks/useWorksheet';
+// components/layout/AppLayout.tsx
 
-interface AppLayoutProps {
+import React from 'react';
+import type { Worksheet } from '@/types/worksheet';
+
+export interface AppLayoutProps {
   children: React.ReactNode;
-  title?: string;
-  debugInfo?: React.ReactNode;
-  worksheets?: Worksheet[];
-  currentWorksheet?: string;
-  onWorksheetSwitch?: (id: string) => void;
-  onDebugHide?: () => void; // 新增 onDebugHide 屬性
+  worksheets: Worksheet[];
+  currentWorksheet: string;
+  onWorksheetSwitch: (id: string) => void;
 }
 
-export function AppLayout({ 
-  children, 
-  title = " CloudDesk OS", 
-  debugInfo,
-  worksheets = [],
-  currentWorksheet = '',
-  onWorksheetSwitch = () => {}
+export function AppLayout({
+  children,
+  worksheets,
+  currentWorksheet,
+  onWorksheetSwitch,
 }: AppLayoutProps) {
   return (
-    <div style={{ 
-      minHeight: '100vh',
-      backgroundColor: '#f5f5f5',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
-      {/* Status Bar */}
-      <StatusBar 
-        worksheets={worksheets}
-        currentWorksheet={currentWorksheet}
-        onWorksheetSwitch={onWorksheetSwitch}
-      />
+    <div>
+      {/* 假設有個側邊欄列出 worksheets */}
+      <aside>
+        {worksheets.map((ws) => (
+          <button
+            key={ws.id}
+            className={ws.id === currentWorksheet ? 'font-bold' : ''}
+            onClick={() => onWorksheetSwitch(ws.id)}
+          >
+            {ws.name}
+          </button>
+        ))}
+      </aside>
 
-
-      {/* 主要內容 */}
-      <main className="flex items-center justify-center" style={{
-        flex: 1,
-        position: 'relative'
-      }}>
-        {children}
-      </main>
-
-      {/* 調試資訊 */}
-      {debugInfo && (
-        <div style={{
-          position: 'fixed',
-          top: 'var(--status-bar-height, 50px)', // 動態計算位置
-          left: '10px',
-          background: 'rgba(0,0,0,0.8)',
-          color: 'white',
-          padding: '8px 12px',
-          borderRadius: '6px',
-          fontSize: '12px',
-          fontFamily: 'monospace',
-          zIndex: 1001,
-          maxWidth: '300px'
-        }}>
-          {debugInfo}
-        </div>
-      )}
+      {/* 主內容 */}
+      <main>{children}</main>
     </div>
   );
 }
+
+export default AppLayout;

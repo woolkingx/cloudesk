@@ -1,35 +1,73 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { useWorksheet } from '@/hooks/useWorksheet';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import WidgetRenderer from '@/components/widget-renderer';
+import type { Widget } from '@/types/widget';
 
-export default function WorkspacePage() {
-  const router = useRouter();
-  const { worksheets, currentWorksheet, switchWorksheet } = useWorksheet();
+export default function WorkspaceDetailPage() {
+  const params = useParams();
+  const workspaceId = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  const handleWorksheetSwitch = (id: string) => {
-    // 如果已經在目標頁面，只觸發調試資訊
-    if (id === currentWorksheet) {
-      return;
+  const [widgets, setWidgets] = useState<Widget[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchWidgets() {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/test?type=widgets&workspaceId=${workspaceId}`);
+        const json = await res.json();
+        setWidgets(Array.isArray(json.widgets) ? json.widgets : []);
+        setError(null);
+      } catch (err) {
+        console.error('載入 widget 錯誤:', err);
+        setError('載入 widget 錯誤');
+        setWidgets([]);
+      } finally {
+        setLoading(false);
+      }
     }
-    
-    // 切換 worksheet 狀態
-    switchWorksheet(id);
-    // 導航到新頁面
-    router.push(`/workspace/${id}`);
-  };
-  return (
-    <AppLayout 
-//  title="工作區 - CloudDesk OS"
-      worksheets={worksheets}
-      currentWorksheet={currentWorksheet}
-      onWorksheetSwitch={handleWorksheetSwitch}
-    >
-      <div className="flex items-center justify-center h-screen">
-        <h1>工作區內容</h1>
-        {/* 這裡可以添加工作區的具體內容 */}
-      </div>
-    </AppLayout>
-  );
 
+    if (workspaceId) {
+      fetchWidgets();
+    }
+  }, [workspaceId]);
+
+  const displayWidgets = [...widgets];
+
+  if (loading) {
+    displayWidgets.push({
+      id: 'loading-status',
+      type: 'loading',
+      title: '載入中',
+      data: { message: '正在載入工作區資料，請稍候...' },
+      position: { x: 0, y: 0 },
+      size: { width: 1, height: 1 },
+      workspaceId: 'status'
+    });
+  }
+
+  if (error) {
+    displayWidgets.push({
+      id: 'error-status',
+      type: 'error',
+      title: '載入錯誤',
+      data: { message: error },
+      position: { x: 0, y: 0 },
+      size: { width: 1, height: 1 },
+      workspaceId: 'status'
+    });
+  }
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">工作區內容 - {workspaceId}</h1>
+      <WidgetRenderer
+        widgets={displayWidgets}
+        onWidgetUpdate={(id, newData) => console.log('更新 widget', id, newData)}
+        onWidgetRemove={(id) => console.log('刪除 widget', id)}
+      />
+    </div>
+  );
 }
