@@ -1,0 +1,5 @@
+[
+  { "type": "todo", "data": { "items": ["範例任務 1", "範例任務 2"] } },
+  { "type": "note", "data": { "text": "這是範例筆記" } },
+  { "type": "chart", "data": { "values": [10, 20, 30] } }
+]
