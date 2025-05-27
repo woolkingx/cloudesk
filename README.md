@@ -8,7 +8,7 @@ CloudDesk aims to become an AI-native operating system, breaking away from tradi
 driven by semantics, intelligent generation, and automated operations, built on web technologies to run universally across devices.
 
 ### 🏗️ 專案目標
-基於 Next.js + SQLite + JSON 打造一個 AI 驅動作業平台，整合：模組化設計、popup menu（類似 Apple Launchpad）、可拖拉 widget、附屬控制按鈕（大小、顏色、縮放）、安卓風格引導、AI 控制層（文字輸入、語音輸入、API 設定），將系統狀態存入 SQLite，供 AI 驅動自動化操作與場景調度。
+基於 Next.js + SQLite + JSON 打造一個 AI 驅動作業平台，整合：模組化設計、popup menu（類似 Apple Launchpad）、可拖拉 widget、附屬控制按鈕（大小、顏色、縮放）、安卓風格引導、AI 控制層（文字輸入、語音輸入、API 設定），將系統狀態存入 SQLite，供 AI 驅動自動化操作與場景調度，使用 MCP API 做為操作標準。
 
 ## ✨ 核心特色
 
